@@ -316,7 +316,11 @@
     } catch (e) {
       return print(esc('base64: invalid input'), 'err');
     }
-    print('<pre class="raw">' + linkify(esc(out)) + '</pre>');
+    // decoded text is visitor-supplied: only link paths on this site, never
+    // outside URLs, so a pasted command can't plant a link to somewhere else
+    var safe = esc(out);
+    if (/^\/[\w\-\/]*$/.test(out.trim())) safe = linkify(safe);
+    print('<pre class="raw">' + safe + '</pre>');
   }
 
   function notFound(name) {
@@ -327,7 +331,7 @@
 
   var busy = Promise.resolve();
   function run(raw) {
-    var text = raw.trim();
+    var text = String(raw).trim().slice(0, 200); // same cap as the input box
     var line = null;
     var after = function () { scrollToResponse(line); };
     busy = busy.then(function () {
@@ -335,6 +339,7 @@
       line = term.lastElementChild;
       if (text) {
         if (history[history.length - 1] !== text) history.push(text);
+        if (history.length > 100) history.shift();
         histPos = history.length;
         // the one pipe this shell understands: echo <text> | base64 -d
         var pipe = text.match(/^echo\s+(\S+)\s*\|\s*base64\s+(-d|--decode)\s*$/i);

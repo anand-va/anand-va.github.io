@@ -3,23 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Anand V A</title>
-<meta name="description" content="Anand V A, application security engineer at Deep Armor, Bengaluru.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23cf9b6e'/%3E%3Cpath fill='%231f1814' d='M6.89 23.03L6.89 23.03Q4.87 23.03 3.68 21.86Q2.50 20.68 2.50 18.79L2.50 18.79Q2.50 16.74 3.95 15.56Q5.41 14.37 8.05 14.37L8.05 14.37L10.71 14.37L10.71 13.51Q10.71 12.75 10.18 12.31Q9.65 11.880 8.66 11.88L8.66 11.88Q7.73 11.88 7.17 12.25Q6.62 12.62 6.57 13.34L6.57 13.34L3.07 13.34Q3.14 11.34 4.65 10.16Q6.15 8.97 8.71 8.97L8.71 8.97Q11.40 8.97 12.91 10.21Q14.41 11.44 14.41 13.66L14.41 13.66L14.41 22.78L10.83 22.78L10.83 20.44Q10.59 21.65 9.54 22.34Q8.49 23.03 6.89 23.03ZM8.20 20.07L8.20 20.07Q9.35 20.07 10.03 19.49Q10.71 18.91 10.71 17.97L10.71 17.97L10.71 16.59L8.12 16.59Q7.14 16.59 6.61 17.07Q6.08 17.55 6.08 18.32L6.08 18.32Q6.08 19.08 6.63 19.58Q7.18 20.07 8.20 20.07ZM25.04 22.78L20.40 22.78L15.89 9.22L19.71 9.22L22.08 16.84Q22.30 17.53 22.48 18.27Q22.67 19.01 22.72 19.65L22.72 19.65Q22.77 19.01 22.94 18.27Q23.11 17.53 23.31 16.86L23.31 16.86L25.63 9.22L29.50 9.22L25.04 22.78Z'/%3E%3C/svg%3E">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Anand V A - Application Security Engineer</title>
+<meta name="description" content="Anand V A is an application security engineer at Deep Armor in Bengaluru, writing Semgrep rules for the OWASP Top 10 and validating what AI-driven SAST engines find.">
+<link rel="canonical" href="https://anand-va.com/">
+<meta name="theme-color" content="#1f1814">
+
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="Anand V A">
+<meta property="og:title" content="Anand V A - Application Security Engineer">
+<meta property="og:description" content="I find the cracks in code for a living, politely and with permission. Application security engineer at Deep Armor, Bengaluru.">
+<meta property="og:url" content="https://anand-va.com/">
+<meta property="profile:first_name" content="Anand">
+<meta name="twitter:card" content="summary">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Anand V A",
+  "url": "https://anand-va.com/",
+  "jobTitle": "Application Security Engineer",
+  "worksFor": { "@type": "Organization", "name": "Deep Armor", "url": "https://deeparmor.com" },
+  "address": { "@type": "PostalAddress", "addressLocality": "Bengaluru", "addressCountry": "IN" },
+  "email": "mailto:anandva@proton.me",
+  "sameAs": ["https://www.linkedin.com/in/anand-va", "https://github.com/anand-va"],
+  "knowsAbout": ["Application Security", "SAST", "Semgrep", "OWASP Top 10", "Cloud Security", "CSPM", "AWS", "Azure"]
+}
+</script>
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
-<script>
-  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-</script>
-<link rel="stylesheet" href="style.css">
+<script src="/theme-init.js"></script>
+<link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
 <main>
   <div class="logo" aria-hidden="true">av<span>_</span></div>
 
-  <h1 class="visually-hidden">Anand V A</h1>
+  <h1 class="visually-hidden">Anand V A, application security engineer</h1>
 
   <div id="term" aria-live="polite">
   <div class="line" aria-hidden="true"><span class="ps1"><span class="arrow">&#10140;</span>&nbsp; <span class="dir">~</span></span> <span id="cmd">whoami</span></div>
@@ -45,7 +71,7 @@
   <form class="line prompt" id="next" autocomplete="off">
     <label class="ps1" for="cmdline"><span class="arrow">&#10140;</span>&nbsp; <span class="dir">~</span></label>
     <input id="cmdline" type="text" spellcheck="false" autocapitalize="off" autocorrect="off"
-      enterkeyhint="go" aria-label="Type a command, or press enter to run the suggestion">
+      enterkeyhint="go" maxlength="200" aria-label="Type a command, or press enter to run the suggestion">
     <button type="button" id="run-hint" class="hint" tabindex="-1">&#8629; run</button>
   </form>
 </main>
@@ -56,32 +82,12 @@
   <span class="f-clock"><time id="clock">--:--</time> in Bengaluru</span>
   <span id="tzdiff" class="tzdiff"></span>
   <span class="sep sep-theme">/</span>
-  <button id="theme" type="button">theme: <span id="theme-name">auto</span></button>
+  <button id="theme" type="button" data-reload>theme: <span id="theme-name">auto</span></button>
 </footer>
 
-<script src="md.js"></script>
-<script src="terminal.js"></script>
-<script src="clock.js"></script>
-<script>
-  // light / dark toggle
-  var root = document.documentElement;
-  var btn = document.getElementById('theme');
-  var label = document.getElementById('theme-name');
-  function current() {
-    return root.dataset.theme ||
-      (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  }
-  var names = { light: 'latte', dark: 'mocha' };
-  label.textContent = names[current()];
-  window.setTheme = function (next) {
-    root.dataset.theme = next;
-    label.textContent = names[next];
-    try { localStorage.setItem('theme', next); } catch (e) {}
-  };
-  btn.addEventListener('click', function () {
-    setTheme(current() === 'dark' ? 'light' : 'dark');
-    location.reload();
-  });
-</script>
+<script src="/md.js"></script>
+<script src="/theme.js"></script>
+<script src="/terminal.js"></script>
+<script src="/clock.js"></script>
 </body>
 </html>

@@ -256,6 +256,9 @@ pre.raw {
 .md-h2 + .md-h3 { margin-top: 0.5rem; }
 .md-list li + li { margin-top: 0.35rem; }
 
+.logo.plain { display: inline-block; color: inherit; text-decoration: none; }
+.output.ls a { margin-right: 0.4em; }
+
 /* standalone /resume page */
 .page-head {
   display: flex;

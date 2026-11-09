@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex">
+<title>404 - Anand V A</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="/theme-init.js"></script>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<main>
+  <a class="logo plain" href="/" aria-label="Home">av<span>_</span></a>
+
+  <h1 class="visually-hidden">Page not found</h1>
+
+  <div class="line"><span class="ps1"><span class="arrow">&#10140;</span>&nbsp; <span class="dir">~</span></span> cd <span id="path">this-page</span></div>
+  <div class="output">
+    <div>zsh: no such file or directory: <span id="path2">this-page</span></div>
+    <div class="muted tip">nothing to see here. maybe it moved, maybe it never existed.</div>
+  </div>
+
+  <div class="line"><span class="ps1"><span class="arrow">&#10140;</span>&nbsp; <span class="dir">~</span></span> ls</div>
+  <div class="output ls">
+    <a href="/">~ (home)</a>
+    <a href="/resume/">resume/</a>
+  </div>
+</main>
+
+<footer>
+  <span>&copy; 2026</span>
+  <span class="sep sep-clock">/</span>
+  <span class="f-clock"><time id="clock">--:--</time> in Bengaluru</span>
+  <span id="tzdiff" class="tzdiff"></span>
+  <span class="sep sep-theme">/</span>
+  <button id="theme" type="button">theme: <span id="theme-name">auto</span></button>
+</footer>
+
+<script src="/theme.js"></script>
+<script src="/clock.js"></script>
+<script src="/404.js"></script>
+</body>
+</html>

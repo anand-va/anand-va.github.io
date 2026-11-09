@@ -1,0 +1,6 @@
+# found something on anand-va.com? i'd genuinely like to hear about it.
+# please report privately first; no legal action for good-faith research.
+Contact: mailto:anandva@proton.me
+Expires: 2027-11-09T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://anand-va.com/.well-known/security.txt
