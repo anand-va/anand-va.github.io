@@ -1,0 +1,30 @@
+Certificate:
+  Data:
+    Version: 3 (0x2)
+    Serial Number: YGLPFDY7DRYZ
+    Issuer: O=Google, OU=Coursera
+    Validity
+      Not Before: Jul 2024
+      Not After : does not expire
+    Subject: CN=Anand V A
+    Title: Google Cybersecurity Professional Certificate
+    X509v3 extensions:
+      Courses:
+        Play It Safe: Manage Security Risks
+          Mar 2024  https://coursera.org/verify/ZZC8NASYN788
+        Connect and Protect: Networks and Network Security
+          Apr 2024  https://coursera.org/verify/AK7588ZRYEB9
+        Tools of the Trade: Linux and SQL
+          May 2024  https://coursera.org/verify/ASQACHNRRST8
+        Assets, Threats, and Vulnerabilities
+          Jun 2024  https://coursera.org/verify/3GQW264GUY73
+        Sound the Alarm: Detection and Response
+          Jul 2024  https://coursera.org/verify/WJT2X27MUJ8J
+        Automate Cybersecurity Tasks with Python
+          Jul 2024  https://coursera.org/verify/TRHR72FHN955
+        Put It to Work: Prepare for Cybersecurity Jobs
+          Jul 2024  https://coursera.org/verify/SBD32N34CXU7
+      Skills:
+        Cybersecurity, Python, Linux, SQL, network security,
+        threat analysis, incident response, regular expressions
+  Verify: https://coursera.org/verify/professional-cert/YGLPFDY7DRYZ

@@ -21,6 +21,7 @@
 
   <h1 class="visually-hidden">Anand V A</h1>
 
+  <div id="term" aria-live="polite">
   <div class="line" aria-hidden="true"><span class="ps1"><span class="arrow">&#10140;</span>&nbsp; <span class="dir">~</span></span> <span id="cmd">whoami</span></div>
 
   <p id="out">Hi, I'm Anand, a security engineer at
@@ -38,8 +39,14 @@
   that needs breaking, or just want to talk shop?
   <a href="mailto:anandva@proton.me">Email me</a> or find me on
   <a href="https://www.linkedin.com/in/anand-va">LinkedIn</a>.</p>
+  </div>
 
-  <div class="line" id="next" aria-hidden="true"><span class="ps1"><span class="arrow">&#10140;</span>&nbsp; <span class="dir">~</span></span> <span class="cursor"></span></div>
+  <form class="line prompt" id="next" autocomplete="off">
+    <label class="ps1" for="cmdline"><span class="arrow">&#10140;</span>&nbsp; <span class="dir">~</span></label>
+    <input id="cmdline" type="text" spellcheck="false" autocapitalize="off" autocorrect="off"
+      enterkeyhint="go" aria-label="Type a command, or press enter to run the suggestion">
+    <button type="button" id="run-hint" class="hint" tabindex="-1">&#8629; run</button>
+  </form>
 </main>
 
 <footer>
@@ -50,30 +57,8 @@
   <button id="theme" type="button">theme: <span id="theme-name">auto</span></button>
 </footer>
 
+<script src="terminal.js"></script>
 <script>
-  // type out "whoami", then show the answer
-  (function () {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var cmd = document.getElementById('cmd');
-    var out = document.getElementById('out');
-    var next = document.getElementById('next');
-    var word = cmd.textContent;
-    cmd.textContent = '';
-    cmd.classList.add('typing');
-    out.classList.add('hidden');
-    next.classList.add('hidden');
-    var i = 0;
-    setTimeout(function step() {
-      cmd.textContent = word.slice(0, ++i);
-      if (i < word.length) return setTimeout(step, 70 + Math.random() * 80);
-      setTimeout(function () {
-        cmd.classList.remove('typing');
-        out.classList.remove('hidden');
-        next.classList.remove('hidden');
-      }, 250);
-    }, 400);
-  })();
-
   // Bengaluru local time
   var clock = document.getElementById('clock');
   function tick() {
@@ -94,11 +79,13 @@
   }
   var names = { light: 'latte', dark: 'mocha' };
   label.textContent = names[current()];
-  btn.addEventListener('click', function () {
-    var next = current() === 'dark' ? 'light' : 'dark';
+  window.setTheme = function (next) {
     root.dataset.theme = next;
     label.textContent = names[next];
     try { localStorage.setItem('theme', next); } catch (e) {}
+  };
+  btn.addEventListener('click', function () {
+    setTheme(current() === 'dark' ? 'light' : 'dark');
     location.reload();
   });
 </script>

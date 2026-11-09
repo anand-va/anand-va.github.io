@@ -1,0 +1,15 @@
+Certificate:
+  Data:
+    Version: 3 (0x2)
+    Serial Number: none
+    Issuer: O=Red Hat
+    Validity
+      Not Before: Feb 2024
+      Not After : does not expire
+    Subject: CN=Anand V A
+    Title: Red Hat OpenShift I: Containers & Kubernetes (DO180)
+    Type: Certificate of attendance
+    X509v3 extensions:
+      Skills:
+        Kubernetes, containers, Red Hat Enterprise Linux
+  Verify: not available (certificate of attendance)

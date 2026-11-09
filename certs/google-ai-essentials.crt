@@ -1,0 +1,14 @@
+Certificate:
+  Data:
+    Version: 3 (0x2)
+    Serial Number: QY2K9XPEVLKT
+    Issuer: O=Google, OU=Coursera
+    Validity
+      Not Before: Jun 2024
+      Not After : does not expire
+    Subject: CN=Anand V A
+    Title: Google AI Essentials
+    X509v3 extensions:
+      Skills:
+        Artificial intelligence, prompt engineering
+  Verify: https://coursera.org/verify/QY2K9XPEVLKT
