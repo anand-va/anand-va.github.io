@@ -257,6 +257,28 @@ pre.raw {
 .md-list li + li { margin-top: 0.35rem; }
 
 /* standalone /resume page */
+.page-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1em;
+  margin-bottom: 1.4rem;
+}
+.page-head .logo {
+  margin-bottom: 0;
+  color: inherit;
+  text-decoration: none;
+}
+.crumb {
+  font-weight: 600;
+  color: var(--muted);
+}
+.crumb a.dir {
+  color: var(--accent2);
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+.crumb a.dir:hover { text-decoration-style: solid; }
 .page-prompt { margin-bottom: 0.4rem; }
 .page-prompt a { color: inherit; text-decoration: none; }
 .page-prompt a:hover .dir { text-decoration: underline dotted; }

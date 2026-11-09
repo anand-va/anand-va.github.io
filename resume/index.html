@@ -17,11 +17,12 @@
 <body>
 
 <main>
-  <a class="logo" href="/" style="color:inherit;text-decoration:none" aria-label="Home">av<span>_</span></a>
+  <header class="page-head" id="top">
+    <a class="logo" href="/" aria-label="Home">av<span>_</span></a>
+    <nav class="crumb" aria-label="Breadcrumb"><a class="dir" href="/" title="cd ~ (or press Esc)">~</a>/resume</nav>
+  </header>
 
   <h1 class="visually-hidden">Resume of Anand V A</h1>
-
-  <div class="line page-prompt" aria-hidden="true"><a href="/"><span class="ps1"><span class="arrow">&#10140;</span>&nbsp; <span class="dir">~</span></span></a> mdv RESUME.md</div>
 
   <div class="output md" id="resume">
     <p class="muted">loading&hellip; if this doesn't load, <a href="/resume.pdf">open the PDF</a>.</p>
@@ -31,6 +32,7 @@
     <span class="muted">resume.pdf</span>
     <a href="/resume.pdf" target="_blank" rel="noopener">view</a>
     <a href="/resume.pdf" download="Anand_VA_Resume.pdf">download</a>
+    <a href="#top" id="to-top">&uarr; top</a>
     <a href="/">cd ~</a>
   </div>
 </main>
@@ -53,6 +55,17 @@
       document.getElementById('resume').innerHTML = MD.render(text);
     })
     .catch(function () {});
+
+  // ↑ top: jump back up without adding #top to the address
+  document.getElementById('to-top').addEventListener('click', function (e) {
+    e.preventDefault();
+    window.scrollTo(0, 0);
+  });
+
+  // Esc goes home, like backing out of a man page
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !e.ctrlKey && !e.metaKey && !e.altKey) location.href = '/';
+  });
 
   var clock = document.getElementById('clock');
   function tick() {
