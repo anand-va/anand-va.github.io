@@ -344,13 +344,15 @@ footer > * { font-size: 0.82em; }
 .tzdiff::before { content: "("; }
 .tzdiff::after { content: ")"; }
 
-/* phones: clock and difference on the first line, theme switch on the next */
+/* phones: "© 2026 / theme" on the first line, the clock on the next */
 @media (max-width: 600px) {
-  footer { gap: 0 0.45em; }
-  footer > * { font-size: 0.78em; }
-  .tzdiff { margin-left: -0.2em; }
-  .sep-theme { display: none; }
-  footer #theme { flex-basis: 100%; text-align: center; }
+  .sep-clock { display: none; }
+  footer > span:first-child { order: 1; }
+  .sep-theme { order: 2; }
+  footer #theme { order: 3; }
+  footer::after { content: ""; flex-basis: 100%; order: 4; } /* line break */
+  .f-clock { order: 5; }
+  .tzdiff { order: 6; }
 }
 
 .sep { opacity: 0.6; }
