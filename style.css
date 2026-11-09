@@ -338,21 +338,19 @@ footer {
 
 footer > * { font-size: 0.82em; }
 
-/* time difference: inline in brackets on wide screens,
-   its own line under the footer on phones */
+/* time difference, in brackets right after the clock */
 .tzdiff:empty { display: none; }
 .tzdiff { margin-left: -0.3em; }
 .tzdiff::before { content: "("; }
 .tzdiff::after { content: ")"; }
 
+/* phones: clock and difference on the first line, theme switch on the next */
 @media (max-width: 600px) {
-  .tzdiff {
-    order: 99;
-    flex-basis: 100%;
-    text-align: center;
-    margin-left: 0;
-  }
-  .tzdiff::before, .tzdiff::after { content: none; }
+  footer { gap: 0 0.45em; }
+  footer > * { font-size: 0.78em; }
+  .tzdiff { margin-left: -0.2em; }
+  .sep-theme { display: none; }
+  footer #theme { flex-basis: 100%; text-align: center; }
 }
 
 .sep { opacity: 0.6; }
