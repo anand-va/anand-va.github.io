@@ -4,12 +4,15 @@
   // ---- files on this "machine" -------------------------------------------
   // Real files served next to index.html. Directories list their entries.
   var FS = {
+    'RESUME.md': { type: 'file', src: 'RESUME.md' },
     'SKILLS.md': { type: 'file', src: 'SKILLS.md' },
+    'resume.pdf': { type: 'file', src: 'resume.pdf', binary: true },
     'certs/': { type: 'dir', entries: ['google-cybersecurity.crt', 'google-ai-essentials.crt', 'redhat-do180.crt'] }
   };
 
-  var SUGGESTIONS = ['ls', 'mdv SKILLS.md', 'ls -al', 'ls certs', 'help'];
-  var COMMANDS = ['ls', 'mdv', 'cat', 'openssl', 'whoami', 'theme', 'clear', 'help'];
+  var SUGGESTIONS = ['ls', 'mdv RESUME.md', 'mdv SKILLS.md', 'ls -al', 'ls certs', 'help'];
+  var COMMANDS = ['ls', 'mdv', 'cat', 'open', 'resume', 'openssl', 'whoami', 'theme', 'clear', 'help'];
+  var sizes = {}; // byte sizes of binary files, from a HEAD request
   var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var term = document.getElementById('term');
@@ -57,6 +60,21 @@
     form.scrollIntoView({ block: 'nearest' });
   }
 
+  // after a command: if the command and its whole answer fit on screen, just
+  // make sure the prompt is visible; if the answer is taller than the screen,
+  // put the command line at the top so people start reading from the beginning
+  function scrollToResponse(line) {
+    if (!line || !line.isConnected) return scrollToPrompt();
+    var behavior = 'auto'; // jump instantly, like a real terminal
+    var top = line.getBoundingClientRect().top;
+    var bottom = form.getBoundingClientRect().bottom;
+    if (bottom - top <= window.innerHeight - 24) {
+      form.scrollIntoView({ block: 'nearest', behavior: behavior });
+    } else {
+      line.scrollIntoView({ block: 'start', behavior: behavior });
+    }
+  }
+
   function load(name) {
     if (cache[name] != null) return Promise.resolve(cache[name]);
     return fetch(FS[name] ? FS[name].src : name, { cache: 'no-cache' })
@@ -82,91 +100,38 @@
   function openCommand(name) {
     if (/\/$/.test(name)) return 'ls ' + name.replace(/\/$/, '');
     if (/\.md$/i.test(name)) return 'mdv ' + name;
+    if (/\.pdf$/i.test(name)) return 'open ' + name;
     return 'cat ' + name;
   }
 
   function sizeOf(name) {
-    var t = cache[name];
-    if (t == null) return '-';
-    var b = new Blob([t]).size;
-    return b < 1024 ? b + 'B' : (b / 1024).toFixed(1) + 'K';
+    var b = sizes[name];
+    if (b == null) {
+      var t = cache[name];
+      if (t == null) return '-';
+      b = new Blob([t]).size;
+    }
+    if (b < 1024) return b + 'B';
+    var k = b / 1024;
+    return (k < 100 ? k.toFixed(1) : Math.round(k)) + 'K';
   }
 
-  // ---- markdown viewer (mdv) ----------------------------------------------
-  function inline(s) {
-    return esc(s)
-      .replace(/`([^`]+)`/g, '<code>$1</code>')
-      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-      .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2">$1</a>');
+  function headSize(name) {
+    return fetch(FS[name].src, { method: 'HEAD', cache: 'no-cache' }).then(function (r) {
+      var n = parseInt(r.headers.get('content-length'), 10);
+      if (r.ok && n) sizes[name] = n;
+    }).catch(function () {});
   }
 
-  // split "a, b, c" into items, but not commas inside parentheses
-  function splitList(s) {
-    var out = [], depth = 0, cur = '';
-    for (var i = 0; i < s.length; i++) {
-      var c = s[i];
-      if (c === '(') depth++;
-      if (c === ')') depth--;
-      if (c === ',' && depth === 0) { out.push(cur.trim()); cur = ''; } else cur += c;
-    }
-    if (cur.trim()) out.push(cur.trim());
-    return out;
-  }
-
-  // short items become tags; anything long stays a bullet list
-  function renderList(items) {
-    var parts = [];
-    items.forEach(function (it) { parts = parts.concat(/:/.test(it) ? [it] : splitList(it)); });
-    var short = parts.every(function (p) { return p.length <= 40; });
-    if (short) {
-      return '<div class="md-tags">' + parts.map(function (p) {
-        return '<span class="md-tag">' + inline(p) + '</span>';
-      }).join('') + '</div>';
-    }
-    return '<ul class="md-list">' + items.map(function (it) {
-      return '<li>' + inline(it) + '</li>';
-    }).join('') + '</ul>';
-  }
-
-  function renderMarkdown(text) {
-    var lines = text.replace(/\r/g, '').split('\n');
-    var html = '';
-    var i = 0;
-    if (lines[0] === '---') {
-      html += '<div class="md-front">';
-      for (i = 1; i < lines.length && lines[i] !== '---'; i++) {
-        var m = lines[i].match(/^([\w-]+):\s*(.*)$/);
-        html += m
-          ? '<div class="md-field"><span class="md-key">' + esc(m[1]) + '</span><span>' + esc(m[2]) + '</span></div>'
-          : '<div>' + esc(lines[i]) + '</div>';
-      }
-      html += '</div>';
-      i++;
-    }
-    var list = [];
-    function flush() { if (list.length) { html += renderList(list); list = []; } }
-    for (; i < lines.length; i++) {
-      var line = lines[i];
-      var li = line.match(/^\s*[-*]\s+(.*)$/);
-      if (li) { list.push(li[1]); continue; }
-      flush();
-      var h = line.match(/^(#{1,3})\s+(.*)$/);
-      if (h) {
-        html += '<div class="md-h md-h' + h[1].length + '"><span class="md-title">' +
-          inline(h[2]) + '</span><span class="md-fill" aria-hidden="true"></span></div>';
-      } else if (line.trim()) {
-        html += '<div class="md-p">' + inline(line) + '</div>';
-      }
-    }
-    flush();
-    return html;
-  }
+  // ---- markdown viewer (mdv): shared renderer in md.js --------------------
+  var renderMarkdown = window.MD.render;
 
   // ---- commands ------------------------------------------------------------
   var commands = {
     help: function () {
       var rows = [
         ['ls [-al] [dir]', 'list files', 'ls'],
+        ['resume', 'read my resume (or open resume.pdf)', 'resume'],
         ['mdv <file>', 'render a markdown file', 'mdv SKILLS.md'],
         ['cat <file>', 'print a file as-is', 'cat SKILLS.md'],
         ['openssl x509 -in <file>', 'inspect a certificate', 'openssl x509 -in certs/google-cybersecurity.crt -text'],
@@ -213,7 +178,11 @@
 
       // long listing; load files first so sizes are real
       var files = names.filter(function (n) { return !/\/$/.test(n); });
-      return Promise.all(files.map(function (n) { return load(prefix + n).catch(function () {}); }))
+      return Promise.all(files.map(function (n) {
+        var full = prefix + n;
+        if (FS[full] && FS[full].binary) return sizes[full] != null ? null : headSize(full);
+        return load(full).catch(function () {});
+      }))
         .then(function () {
           var date = 'Nov  9 2026';
           var rows = [];
@@ -259,6 +228,19 @@
       term.innerHTML = '';
     },
 
+    resume: function () { return show(['RESUME.md'], true, 'mdv'); },
+
+    open: function (args) {
+      var name = resolve(args[0] || '');
+      if (!args[0]) return print('usage: open &lt;file&gt;. try ' + runBtn('open resume.pdf', 'open resume.pdf'));
+      if (!name) return print(esc('open: ' + args[0] + ': No such file or directory'), 'err');
+      if (/\/$/.test(name)) return commands.ls([name]);
+      if (!FS[name] || !FS[name].binary) return show([name], /\.md$/i.test(name), 'open');
+      window.open(FS[name].src, '_blank', 'noopener');
+      print('<span class="muted">opened ' + esc(name) + ' in a new tab. </span>' +
+        '<a href="' + esc(FS[name].src) + '" download>download it</a>');
+    },
+
     // openssl x509 -in certs/foo.crt [-text] [-noout]: shows the certificate
     openssl: function (args) {
       var i = args.indexOf('-in');
@@ -283,6 +265,9 @@
     if (!arg) return print('usage: ' + cmd + ' &lt;file&gt;. try ' + runBtn(cmd + ' SKILLS.md', cmd + ' SKILLS.md'));
     var name = resolve(arg);
     if (!name) return print(esc(cmd + ': ' + arg + ': No such file or directory'), 'err');
+    if (FS[name] && FS[name].binary) {
+      return print(esc(cmd + ': ' + name + ': binary file. try ') + runBtn('open ' + name, 'open ' + name), 'err');
+    }
     if (FS[name] && FS[name].type === 'dir') {
       return print(esc(cmd + ': ' + name + ': Is a directory') + '. try ' + runBtn('ls ' + name, 'ls ' + name), 'err');
     }
@@ -310,8 +295,11 @@
   var busy = Promise.resolve();
   function run(raw) {
     var text = raw.trim();
+    var line = null;
+    var after = function () { scrollToResponse(line); };
     busy = busy.then(function () {
       term.insertAdjacentHTML('beforeend', promptLine(text));
+      line = term.lastElementChild;
       if (text) {
         if (history[history.length - 1] !== text) history.push(text);
         histPos = history.length;
@@ -323,7 +311,7 @@
         catch (e) { print('something broke: ' + esc(e.message), 'err'); }
         return Promise.resolve(result);
       }
-    }).then(scrollToPrompt, scrollToPrompt);
+    }).then(after, after);
     return busy;
   }
 
@@ -416,10 +404,43 @@
     if (matchMedia('(pointer: fine)').matches) input.focus({ preventScroll: true });
   });
 
-  // clicking empty space in the terminal focuses the prompt, like a real terminal
-  document.querySelector('main').addEventListener('click', function (e) {
-    if (e.target.closest('a, button, input')) return;
+  // is the click point actually on a character of text (not just inside a
+  // text block's empty area)? so people can still select text to copy it
+  function onText(x, y) {
+    var node, offset;
+    if (document.caretPositionFromPoint) {
+      var p = document.caretPositionFromPoint(x, y);
+      if (!p) return false;
+      node = p.offsetNode; offset = p.offset;
+    } else if (document.caretRangeFromPoint) {
+      var r0 = document.caretRangeFromPoint(x, y);
+      if (!r0) return false;
+      node = r0.startContainer; offset = r0.startOffset;
+    } else {
+      return false;
+    }
+    if (!node || node.nodeType !== 3 || !node.textContent.trim()) return false;
+    var range = document.createRange();
+    var len = node.textContent.length;
+    // check the character on each side of the caret
+    for (var o = Math.max(0, offset - 1); o <= Math.min(len - 1, offset); o++) {
+      range.setStart(node, o);
+      range.setEnd(node, o + 1);
+      var rects = range.getClientRects();
+      for (var i = 0; i < rects.length; i++) {
+        var b = rects[i];
+        if (x >= b.left - 2 && x <= b.right + 2 && y >= b.top - 2 && y <= b.bottom + 2) return true;
+      }
+    }
+    return false;
+  }
+
+  // clicking anywhere except text, links, buttons and the footer focuses the
+  // prompt, like a real terminal
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('a, button, input, label, footer')) return;
     if (String(window.getSelection())) return;
+    if (onText(e.clientX, e.clientY)) return;
     input.focus({ preventScroll: true });
   });
 
@@ -461,7 +482,10 @@
     form.classList.remove('hidden');
     cycle();
     // preload file sizes for ls -al
-    Object.keys(FS).forEach(function (n) { if (FS[n].type === 'file') load(n).catch(function () {}); });
+    Object.keys(FS).forEach(function (n) {
+      if (FS[n].type !== 'file') return;
+      if (FS[n].binary) headSize(n); else load(n).catch(function () {});
+    });
     if (matchMedia('(pointer: fine)').matches) input.focus({ preventScroll: true });
   }
 

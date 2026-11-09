@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resume - Anand V A</title>
+<meta name="description" content="Resume of Anand V A, application security engineer at Deep Armor, Bengaluru.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23cf9b6e'/%3E%3Cpath fill='%231f1814' d='M6.89 23.03L6.89 23.03Q4.87 23.03 3.68 21.86Q2.50 20.68 2.50 18.79L2.50 18.79Q2.50 16.74 3.95 15.56Q5.41 14.37 8.05 14.37L8.05 14.37L10.71 14.37L10.71 13.51Q10.71 12.75 10.18 12.31Q9.65 11.880 8.66 11.88L8.66 11.88Q7.73 11.88 7.17 12.25Q6.62 12.62 6.57 13.34L6.57 13.34L3.07 13.34Q3.14 11.34 4.65 10.16Q6.15 8.97 8.71 8.97L8.71 8.97Q11.40 8.97 12.91 10.21Q14.41 11.44 14.41 13.66L14.41 13.66L14.41 22.78L10.83 22.78L10.83 20.44Q10.59 21.65 9.54 22.34Q8.49 23.03 6.89 23.03ZM8.20 20.07L8.20 20.07Q9.35 20.07 10.03 19.49Q10.71 18.91 10.71 17.97L10.71 17.97L10.71 16.59L8.12 16.59Q7.14 16.59 6.61 17.07Q6.08 17.55 6.08 18.32L6.08 18.32Q6.08 19.08 6.63 19.58Q7.18 20.07 8.20 20.07ZM25.04 22.78L20.40 22.78L15.89 9.22L19.71 9.22L22.08 16.84Q22.30 17.53 22.48 18.27Q22.67 19.01 22.72 19.65L22.72 19.65Q22.77 19.01 22.94 18.27Q23.11 17.53 23.31 16.86L23.31 16.86L25.63 9.22L29.50 9.22L25.04 22.78Z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<script>
+  try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<main>
+  <a class="logo" href="/" style="color:inherit;text-decoration:none" aria-label="Home">av<span>_</span></a>
+
+  <h1 class="visually-hidden">Resume of Anand V A</h1>
+
+  <div class="line page-prompt" aria-hidden="true"><a href="/"><span class="ps1"><span class="arrow">&#10140;</span>&nbsp; <span class="dir">~</span></span></a> mdv RESUME.md</div>
+
+  <div class="output md" id="resume">
+    <p class="muted">loading&hellip; if this doesn't load, <a href="/resume.pdf">open the PDF</a>.</p>
+  </div>
+
+  <div class="pdf-bar">
+    <span class="muted">resume.pdf</span>
+    <a href="/resume.pdf" target="_blank" rel="noopener">view</a>
+    <a href="/resume.pdf" download="Anand_VA_Resume.pdf">download</a>
+    <a href="/">cd ~</a>
+  </div>
+</main>
+
+<footer>
+  <span>&copy; 2026</span>
+  <span class="sep">/</span>
+  <span><time id="clock">--:--</time> in Bengaluru</span>
+  <span class="sep">/</span>
+  <button id="theme" type="button">theme: <span id="theme-name">auto</span></button>
+</footer>
+
+<script src="/md.js"></script>
+<script>
+  // render RESUME.md, minus its own PDF section (the bar below covers it)
+  fetch('/RESUME.md', { cache: 'no-cache' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(function (text) {
+      text = text.replace(/\n## PDF[\s\S]*$/, '\n');
+      document.getElementById('resume').innerHTML = MD.render(text);
+    })
+    .catch(function () {});
+
+  var clock = document.getElementById('clock');
+  function tick() {
+    clock.textContent = new Date().toLocaleTimeString('en-GB', {
+      hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata'
+    });
+  }
+  tick();
+  setInterval(tick, 15000);
+
+  var root = document.documentElement;
+  var label = document.getElementById('theme-name');
+  var names = { light: 'latte', dark: 'mocha' };
+  function current() {
+    return root.dataset.theme ||
+      (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  }
+  label.textContent = names[current()];
+  document.getElementById('theme').addEventListener('click', function () {
+    var next = current() === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    label.textContent = names[next];
+    try { localStorage.setItem('theme', next); } catch (e) {}
+  });
+</script>
+</body>
+</html>
