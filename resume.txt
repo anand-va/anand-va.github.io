@@ -1,0 +1,11 @@
+# resume.txt
+# you went poking around. good instinct.
+
+looking for the resume? no exploit required.
+
+  read it here ........ /resume
+  take a copy ......... resume.pdf
+
+flag{you_found_the_resume}
+
+# psst, puzzle people: echo L3Jlc3VtZQ== | base64 -d

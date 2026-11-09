@@ -4,14 +4,18 @@
   // ---- files on this "machine" -------------------------------------------
   // Real files served next to index.html. Directories list their entries.
   var FS = {
-    'RESUME.md': { type: 'file', src: 'RESUME.md' },
+    // hidden: still openable by name, but never listed. resume.txt is the way in
+    'resume.txt': { type: 'file', src: 'resume.txt' },
+    'RESUME.md': { type: 'file', src: 'RESUME.md', hidden: true },
     'SKILLS.md': { type: 'file', src: 'SKILLS.md' },
-    'resume.pdf': { type: 'file', src: 'resume.pdf', binary: true },
+    'resume.pdf': { type: 'file', src: 'resume.pdf', binary: true, hidden: true },
     'certs/': { type: 'dir', entries: ['google-cybersecurity.crt', 'google-ai-essentials.crt', 'redhat-do180.crt'] }
   };
 
-  var SUGGESTIONS = ['ls', 'mdv RESUME.md', 'mdv SKILLS.md', 'ls -al', 'ls certs', 'help'];
-  var COMMANDS = ['ls', 'mdv', 'cat', 'open', 'resume', 'openssl', 'whoami', 'theme', 'clear', 'help'];
+  var SUGGESTIONS = ['ls', 'cat resume.txt', 'mdv SKILLS.md', 'ls -al', 'ls certs', 'help'];
+  var COMMANDS = ['ls', 'mdv', 'cat', 'open', 'echo', 'base64', 'openssl', 'whoami', 'theme', 'clear', 'help'];
+
+  function visible(name) { return !(FS[name] && FS[name].hidden); }
   var sizes = {}; // byte sizes of binary files, from a HEAD request
   var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -131,7 +135,6 @@
     help: function () {
       var rows = [
         ['ls [-al] [dir]', 'list files', 'ls'],
-        ['resume', 'read my resume (or open resume.pdf)', 'resume'],
         ['mdv <file>', 'render a markdown file', 'mdv SKILLS.md'],
         ['cat <file>', 'print a file as-is', 'cat SKILLS.md'],
         ['openssl x509 -in <file>', 'inspect a certificate', 'openssl x509 -in certs/google-cybersecurity.crt -text'],
@@ -166,7 +169,7 @@
           names = [r];
         }
       } else {
-        names = Object.keys(FS);
+        names = Object.keys(FS).filter(visible);
       }
 
       if (!long) {
@@ -228,11 +231,21 @@
       term.innerHTML = '';
     },
 
-    resume: function () { return show(['RESUME.md'], true, 'mdv'); },
+    echo: function (args) {
+      print(esc(args.join(' ')));
+    },
+
+    base64: function (args) {
+      var flag = args[0];
+      if ((flag !== '-d' && flag !== '--decode') || !args[1]) {
+        return print('usage: base64 -d &lt;text&gt;, or echo &lt;text&gt; | base64 -d');
+      }
+      return decode64(args[1]);
+    },
 
     open: function (args) {
       var name = resolve(args[0] || '');
-      if (!args[0]) return print('usage: open &lt;file&gt;. try ' + runBtn('open resume.pdf', 'open resume.pdf'));
+      if (!args[0]) return print('usage: open &lt;file&gt;. try ' + runBtn('ls', 'ls'));
       if (!name) return print(esc('open: ' + args[0] + ': No such file or directory'), 'err');
       if (/\/$/.test(name)) return commands.ls([name]);
       if (!FS[name] || !FS[name].binary) return show([name], /\.md$/i.test(name), 'open');
@@ -272,18 +285,38 @@
       return print(esc(cmd + ': ' + name + ': Is a directory') + '. try ' + runBtn('ls ' + name, 'ls ' + name), 'err');
     }
     return load(name).then(function (text) {
+      var body = linkify(esc(text.replace(/\s+$/, '')));
+      // in .txt clue files, dim the # comment lines
+      if (/\.txt$/i.test(name)) body = body.replace(/^(#.*)$/gm, '<span class="muted">$1</span>');
       print(render && /\.md$/i.test(name) ? '<div class="md">' + renderMarkdown(text) + '</div>'
-        : '<pre class="raw">' + linkify(esc(text.replace(/\s+$/, ''))) + '</pre>');
+        : '<pre class="raw">' + body + '</pre>');
     }, function () {
       print(esc(cmd + ': ' + name + ': could not be read'), 'err');
     });
   }
 
-  // make bare https:// URLs in plain-text output clickable
+  // make bare https:// URLs, site paths (/resume) and pdf names clickable
   function linkify(escaped) {
-    return escaped.replace(/https?:\/\/[^\s<]+/g, function (u) {
-      return '<a href="' + u + '" target="_blank" rel="noopener">' + u + '</a>';
-    });
+    return escaped
+      .replace(/https?:\/\/[^\s<]+/g, function (u) {
+        return '<a href="' + u + '" target="_blank" rel="noopener">' + u + '</a>';
+      })
+      .replace(/(^|\s)(\/[\w\-\/]*[\w\-]|[\w\-]+\.pdf)(?=\s|$)/gm, function (m, pre, p) {
+        var href = p[0] === '/' ? p : '/' + p;
+        var extra = /\.pdf$/i.test(p) ? ' target="_blank" rel="noopener"' : '';
+        return pre + '<a href="' + href + '"' + extra + '>' + p + '</a>';
+      });
+  }
+
+  // base64 -d, for the puzzle in resume.txt
+  function decode64(s) {
+    var out;
+    try {
+      out = decodeURIComponent(escape(atob(s.replace(/^["']|["']$/g, ''))));
+    } catch (e) {
+      return print(esc('base64: invalid input'), 'err');
+    }
+    print('<pre class="raw">' + linkify(esc(out)) + '</pre>');
   }
 
   function notFound(name) {
@@ -303,6 +336,13 @@
       if (text) {
         if (history[history.length - 1] !== text) history.push(text);
         histPos = history.length;
+        // the one pipe this shell understands: echo <text> | base64 -d
+        var pipe = text.match(/^echo\s+(\S+)\s*\|\s*base64\s+(-d|--decode)\s*$/i);
+        if (pipe) return Promise.resolve(decode64(pipe[1]));
+        if (/\|/.test(text)) {
+          print('<span class="muted">this shell only knows one pipe: echo &lt;text&gt; | base64 -d</span>');
+          return;
+        }
         var parts = text.split(/\s+/);
         var name = parts[0].toLowerCase();
         var fn = commands[name];
@@ -363,7 +403,7 @@
       pool = COMMANDS;
     } else {
       pool = [];
-      Object.keys(FS).forEach(function (n) {
+      Object.keys(FS).filter(visible).forEach(function (n) {
         pool.push(n);
         if (FS[n].type === 'dir') FS[n].entries.forEach(function (c) { pool.push(n + c); });
       });

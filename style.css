@@ -36,6 +36,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-variant-ligatures: none; /* show == and -> exactly as typed */
   font-size: clamp(14px, 0.45vw + 12px, 17px);
   line-height: 1.75;
   display: flex;
