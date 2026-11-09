@@ -338,6 +338,23 @@ footer {
 
 footer > * { font-size: 0.82em; }
 
+/* time difference: inline in brackets on wide screens,
+   its own line under the footer on phones */
+.tzdiff:empty { display: none; }
+.tzdiff { margin-left: -0.3em; }
+.tzdiff::before { content: "("; }
+.tzdiff::after { content: ")"; }
+
+@media (max-width: 600px) {
+  .tzdiff {
+    order: 99;
+    flex-basis: 100%;
+    text-align: center;
+    margin-left: 0;
+  }
+  .tzdiff::before, .tzdiff::after { content: none; }
+}
+
 .sep { opacity: 0.6; }
 
 @media (max-width: 600px) {

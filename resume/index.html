@@ -40,12 +40,14 @@
 <footer>
   <span>&copy; 2026</span>
   <span class="sep">/</span>
-  <span><time id="clock">--:--</time> in Bengaluru</span>
+  <span class="f-clock"><time id="clock">--:--</time> in Bengaluru</span>
+  <span id="tzdiff" class="tzdiff"></span>
   <span class="sep">/</span>
   <button id="theme" type="button">theme: <span id="theme-name">auto</span></button>
 </footer>
 
 <script src="/md.js"></script>
+<script src="/clock.js"></script>
 <script>
   // render RESUME.md, minus its own PDF section (the bar below covers it)
   fetch('/RESUME.md', { cache: 'no-cache' })
@@ -66,15 +68,6 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && !e.ctrlKey && !e.metaKey && !e.altKey) location.href = '/';
   });
-
-  var clock = document.getElementById('clock');
-  function tick() {
-    clock.textContent = new Date().toLocaleTimeString('en-GB', {
-      hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata'
-    });
-  }
-  tick();
-  setInterval(tick, 15000);
 
   var root = document.documentElement;
   var label = document.getElementById('theme-name');

@@ -53,24 +53,16 @@
 <footer>
   <span>&copy; 2026</span>
   <span class="sep">/</span>
-  <span><time id="clock">--:--</time> in Bengaluru</span>
+  <span class="f-clock"><time id="clock">--:--</time> in Bengaluru</span>
+  <span id="tzdiff" class="tzdiff"></span>
   <span class="sep">/</span>
   <button id="theme" type="button">theme: <span id="theme-name">auto</span></button>
 </footer>
 
 <script src="md.js"></script>
 <script src="terminal.js"></script>
+<script src="clock.js"></script>
 <script>
-  // Bengaluru local time
-  var clock = document.getElementById('clock');
-  function tick() {
-    clock.textContent = new Date().toLocaleTimeString('en-GB', {
-      hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata'
-    });
-  }
-  tick();
-  setInterval(tick, 15000);
-
   // light / dark toggle
   var root = document.documentElement;
   var btn = document.getElementById('theme');
