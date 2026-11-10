@@ -6,7 +6,7 @@ linkedin: linkedin.com/in/anand-va
 ---
 
 ## Summary
-Application security engineer with 2+ years at Deep Armor building detection and AI-assisted validation tooling. Co-authored Semgrep rules for OWASP Top 10 classes across Python, Java, JavaScript and TypeScript (under 15% false positives) that power an AI-driven SAST engine for an enterprise SaaS client. Now validates the engine's findings, including multi-step vulnerability chains, through code review and live testing. Also built AWS and Azure CSPM checks mapped to CIS, NIST, HIPAA and RBI.
+Security engineer with 2+ years at Deep Armor building detection and AI-assisted validation tooling. Co-authored Semgrep rules for OWASP Top 10 classes across Python, Java, JavaScript and TypeScript (under 15% false positives) that power an AI-driven SAST engine for an enterprise SaaS client. Now validates the engine's findings, including multi-step vulnerability chains, through code review and live testing. Also built AWS and Azure CSPM checks mapped to CIS, NIST, HIPAA and RBI.
 
 ## Experience
 
