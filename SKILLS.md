@@ -1,6 +1,6 @@
 ---
 name: anand-va
-description: Application security engineer. Use when code needs a second look before an attacker gives it one, or when a scanner's findings need someone to sort the real bugs from the noise.
+description: Security engineer. Use when code needs a second look before an attacker gives it one, or when a scanner's findings need someone to sort the real bugs from the noise.
 ---
 
 # Skills
