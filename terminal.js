@@ -17,7 +17,9 @@
 
   function visible(name) { return !(FS[name] && FS[name].hidden); }
   var sizes = {}; // byte sizes of binary files, from a HEAD request
-  var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
+  var reduceMotion = motionQuery.matches;
+  motionQuery.addEventListener('change', function (e) { reduceMotion = e.matches; });
 
   var term = document.getElementById('term');
   var form = document.getElementById('next');
@@ -39,7 +41,7 @@
   function el(tag, cls, html) {
     var n = document.createElement(tag);
     if (cls) n.className = cls;
-    if (html != null) n.innerHTML = html;
+    if (html != null) n.innerHTML = window.MD.trust(html);
     return n;
   }
 
@@ -228,7 +230,7 @@
     },
 
     clear: function () {
-      term.innerHTML = '';
+      term.replaceChildren();
     },
 
     echo: function (args) {
@@ -335,7 +337,7 @@
     var line = null;
     var after = function () { scrollToResponse(line); };
     busy = busy.then(function () {
-      term.insertAdjacentHTML('beforeend', promptLine(text));
+      term.insertAdjacentHTML('beforeend', window.MD.trust(promptLine(text)));
       line = term.lastElementChild;
       if (text) {
         if (history[history.length - 1] !== text) history.push(text);
@@ -432,7 +434,7 @@
         return;
       }
       busy = busy.then(function () {
-        term.insertAdjacentHTML('beforeend', promptLine(v));
+        term.insertAdjacentHTML('beforeend', window.MD.trust(promptLine(v)));
         print('<div class="ls">' + matches.map(function (m) {
           return runBtn(m, parts.slice(0, -1).concat(m).join(' '));
         }).join('') + '</div>');
@@ -500,9 +502,22 @@
 
   function setPlaceholder(t) { input.setAttribute('placeholder', t); }
 
+  // moving text shouldn't run forever (WCAG 2.2.2): one pass through the
+  // suggestions, or until the visitor starts typing, then settle on the first
+  function stopCycle() {
+    clearTimeout(timer);
+    timer = null;
+    sIndex = SUGGESTIONS.length;
+    currentSuggestion = SUGGESTIONS[0];
+    setPlaceholder(currentSuggestion);
+  }
+  input.addEventListener('input', stopCycle, { once: true });
+  form.addEventListener('submit', stopCycle, { once: true });
+
   function cycle() {
     clearTimeout(timer);
-    var word = SUGGESTIONS[sIndex % SUGGESTIONS.length];
+    if (sIndex >= SUGGESTIONS.length) return stopCycle();
+    var word = SUGGESTIONS[sIndex];
     currentSuggestion = word;
     if (reduceMotion) {
       setPlaceholder(word);

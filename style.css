@@ -24,16 +24,16 @@
 :root {
   --bg: #ede3d1;
   --text: #3b2e27;
-  --muted: #7d6a5a;
-  --accent: #b0441c;
-  --accent2: #5f7340;
+  --muted: #6f5d4e;
+  --accent: #a63f19;
+  --accent2: #55683a;
   color-scheme: light;
 }
 
 :root[data-theme="dark"] {
   --bg: #1f1814;
   --text: #e3d6c3;
-  --muted: #8f7d6b;
+  --muted: #9a8875;
   --accent: #cf9b6e;
   --accent2: #a4b67c;
   color-scheme: dark;
@@ -43,7 +43,7 @@
   :root:not([data-theme="light"]) {
     --bg: #1f1814;
     --text: #e3d6c3;
-    --muted: #8f7d6b;
+    --muted: #9a8875;
     --accent: #cf9b6e;
     --accent2: #a4b67c;
     color-scheme: dark;
@@ -60,7 +60,7 @@ body {
   color: var(--text);
   font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
   font-variant-ligatures: none; /* show == and -> exactly as typed */
-  font-size: clamp(14px, 0.45vw + 12px, 17px);
+  font-size: clamp(0.875rem, 0.45vw + 0.75rem, 1.0625rem);
   line-height: 1.75;
   display: flex;
   flex-direction: column;
@@ -117,6 +117,7 @@ p {
   margin: 0.6rem 0 0.9rem;
   text-align: justify;
   hyphens: auto;
+  text-wrap: pretty;
 }
 
 .hidden { visibility: hidden; }
@@ -152,14 +153,19 @@ a:hover {
   background: transparent;
   border: 0;
   padding: 0;
+  /* the native ring would box in a terminal line, so focus is shown as an
+     underline instead (accent on cream/espresso is above 3:1) */
   outline: none;
+  border-bottom: 1px solid transparent;
   caret-color: var(--accent);
   caret-shape: block;
 }
 
+.prompt input:focus-visible { border-bottom-color: var(--accent); }
+
 .prompt input::placeholder {
   color: var(--muted);
-  opacity: 0.75;
+  opacity: 1; /* Firefox dims placeholders by default */
   font-weight: 400;
 }
 
@@ -317,7 +323,7 @@ pre.raw {
   border-top: 1px solid color-mix(in srgb, var(--muted) 45%, transparent);
 }
 .md-p { margin: 0.2rem 0; }
-.md-p, .md-list li { text-align: justify; hyphens: auto; }
+.md-p, .md-list li { text-align: justify; hyphens: auto; text-wrap: pretty; }
 
 /* short list items as tags */
 .md-tags {
@@ -371,7 +377,7 @@ footer > * { font-size: 0.82em; }
 .tzdiff::after { content: ")"; }
 
 /* phones: "© 2026 / theme" on the first line, the clock on the next */
-@media (max-width: 600px) {
+@media (max-width: 37.5em) {
   .sep-clock { display: none; }
   footer > span:first-child { order: 1; }
   .sep-theme { order: 2; }
@@ -383,9 +389,9 @@ footer > * { font-size: 0.82em; }
 
 .sep { opacity: 0.6; }
 
-@media (max-width: 600px) {
+@media (max-width: 37.5em) {
   body {
-    font-size: 13px;
+    font-size: 0.8125rem;
     line-height: 1.85;
     padding: 0 1.75rem;
   }

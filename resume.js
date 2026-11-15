@@ -7,7 +7,7 @@
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
     .then(function (text) {
       text = text.replace(/\n## PDF[\s\S]*$/, '\n');
-      document.getElementById('resume').innerHTML = window.MD.render(text);
+      document.getElementById('resume').innerHTML = window.MD.trust(window.MD.render(text));
     })
     .catch(function () {});
 

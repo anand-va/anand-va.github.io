@@ -106,5 +106,14 @@
     return html;
   }
 
-  window.MD = { render: render, esc: esc };
+  // Trusted Types: the CSP only lets markup into the page through this one
+  // policy. everything handed to it is built here or in terminal.js with
+  // every outside value passed through esc(), so it passes strings through.
+  // browsers without Trusted Types get the plain string.
+  var policy = window.trustedTypes
+    ? window.trustedTypes.createPolicy('site', { createHTML: function (s) { return s; } })
+    : null;
+  function trust(html) { return policy ? policy.createHTML(html) : html; }
+
+  window.MD = { render: render, esc: esc, trust: trust };
 })();
