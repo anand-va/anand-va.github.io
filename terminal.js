@@ -502,22 +502,11 @@
 
   function setPlaceholder(t) { input.setAttribute('placeholder', t); }
 
-  // moving text shouldn't run forever (WCAG 2.2.2): one pass through the
-  // suggestions, or until the visitor starts typing, then settle on the first
-  function stopCycle() {
-    clearTimeout(timer);
-    timer = null;
-    sIndex = SUGGESTIONS.length;
-    currentSuggestion = SUGGESTIONS[0];
-    setPlaceholder(currentSuggestion);
-  }
-  input.addEventListener('input', stopCycle, { once: true });
-  form.addEventListener('submit', stopCycle, { once: true });
-
+  // suggestions keep cycling for as long as the page is open. with reduced
+  // motion on they swap in place instead of being typed out.
   function cycle() {
     clearTimeout(timer);
-    if (sIndex >= SUGGESTIONS.length) return stopCycle();
-    var word = SUGGESTIONS[sIndex];
+    var word = SUGGESTIONS[sIndex % SUGGESTIONS.length];
     currentSuggestion = word;
     if (reduceMotion) {
       setPlaceholder(word);
